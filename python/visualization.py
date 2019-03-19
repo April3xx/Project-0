@@ -7,6 +7,7 @@ import config
 import microphone
 import dsp
 import led
+import melbank
 
 _time_prev = time.time() * 1000.0
 """The previous time that the frames_per_second() function was called"""
@@ -94,7 +95,7 @@ g_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
 b_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
                        alpha_decay=0.1, alpha_rise=0.5)
 w_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
-                       alpha_decay=0.1, alpha_rise=0.1)
+                       alpha_decay=0.01, alpha_rise=0.01)
 common_mode = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
                        alpha_decay=0.99, alpha_rise=0.01)
 p_filt = dsp.ExpFilter(np.tile(1, (4, config.N_PIXELS // 2)),
@@ -163,41 +164,6 @@ def visualize_energy(y):
     # Set the new pixel value
     return np.concatenate((p[:, ::-1], p), axis=1)
 
-def test(y):
-    
-    """Effect that expands from the center with increasing sound energy""" 
-    global p
-    y = np.copy(y)
-    gain.update(y)
-    y /= gain.value
-    # Scale by the width of the LED strip
-    y *= float((config.N_PIXELS // 2) - 1)
-    # Map color channels according to energy in the different freq bands
-    scale = 0.9
-    r = int(np.mean(y[:len(y) // 4]**scale))
-    g = int(np.mean(y[len(y) // 4:len(y) // 2]**scale))
-    b = int(np.mean(y[len(y)//2 : 3 *len(y) // 4 ]**scale))
-    w = int(np.mean(y[3 * len(y) // 4:]**scale))
-    # Assign color to different frequency regions
-    p[0, :r] = 255.0
-    p[0, r:] = 0.0
-    p[1, :g] = 255.0
-    p[1, g:] = 0.0
-    p[2, :b] = 255.0
-    p[2, b:] = 0.0
-    p[3, :w] = 255.0
-    p[3, w:] = 0.0
-    p_filt.update(p)
-    p = np.round(p_filt.value)
-    # Apply substantial blur to smooth the edges
-    p[0, :] = gaussian_filter1d(p[0, :], sigma=4.0)
-    p[1, :] = gaussian_filter1d(p[1, :], sigma=4.0)
-    p[2, :] = gaussian_filter1d(p[2, :], sigma=4.0)
-    p[3, :] = gaussian_filter1d(p[3, :], sigma=4.0)
-    # Set the new pixel value
-    return np.concatenate((p[:, ::-1], p), axis=1)
-
-
 _prev_spectrum = np.tile(0.01, config.N_PIXELS // 2)
 
 
@@ -238,7 +204,6 @@ prev_fps_update = time.time()
 def microphone_update(audio_samples):
     global y_roll, prev_rms, prev_exp, prev_fps_update
     # Normalize samples between 0 and 1
-   
     y = audio_samples / 2.0**15
     # Construct a rolling window of audio samples
     y_roll[:-1] = y_roll[1:]
