@@ -9,27 +9,6 @@ import config
 if config.DEVICE == 'esp8266':
     import socket
     _sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# Raspberry Pi controls the LED strip directly
-elif config.DEVICE == 'pi':
-    import neopixel
-    strip = neopixel.Adafruit_NeoPixel(config.N_PIXELS, config.LED_PIN,
-                                       config.LED_FREQ_HZ, config.LED_DMA,
-                                       config.LED_INVERT, config.BRIGHTNESS)
-    strip.begin()
-elif config.DEVICE == 'blinkstick':
-    from blinkstick import blinkstick
-    import signal
-    import sys
-    #Will turn all leds off when invoked.
-    def signal_handler(signal, frame):
-        all_off = [0]*(config.N_PIXELS*3)
-        stick.set_led_data(0, all_off)
-        sys.exit(0)
-
-    stick = blinkstick.find_first()
-    # Create a listener that turns the leds off when the program terminates
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
 
 _gamma = np.load(config.GAMMA_TABLE_PATH)
 """Gamma lookup table used for nonlinear brightness correction"""
