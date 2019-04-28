@@ -18,5 +18,5 @@ while(count < 240):
 m = bytes(m)
 print(m)
 while True:
-    _sock.sendto(m,('192.168.43.62',7777))
+    _sock.sendto(m,('172.20.10.5',7777))
     time.sleep(.1)

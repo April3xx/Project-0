@@ -1,15 +1,15 @@
 import time
 import numpy as np
 import pyaudio
-import config
+
 
 
 def start_stream(callback):
     p = pyaudio.PyAudio()
-    frames_per_buffer = int(config.MIC_RATE / config.FPS)
+    frames_per_buffer = int(44100/ 60)
     stream = p.open(format=pyaudio.paInt16,
                     channels=1,
-                    rate=config.MIC_RATE,
+                    rate=60,
                     input=True,
                     frames_per_buffer=frames_per_buffer)
     overflows = 0
@@ -18,6 +18,7 @@ def start_stream(callback):
         try:
             y = np.fromstring(stream.read(frames_per_buffer), dtype=np.int16)
             y = y.astype(np.float32)
+            callback(y)
             print(y)
         except IOError:
             overflows += 1

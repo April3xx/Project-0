@@ -10,11 +10,11 @@
 // Maximum number of packets to hold in the buffer. Don't change this.
 #define BUFFER_LEN 1024
 // Toggles FPS output (1 = print FPS over serial, 0 = disable output)
-#define PRINT_FPS 1
+#define PRINT_FPS 0
 
 // Wifi and socket settings
-const char* ssid     = "HUAWEI P20 Pro";
-const char* password = "#12345678";
+const char* ssid     = "iPhone";
+const char* password = "11250112501";
 unsigned int localPort = 7777;
 char packetBuffer[BUFFER_LEN];
 byte mac[6];
@@ -26,10 +26,10 @@ WiFiUDP port;
 
 // Network information
 // IP must match the IP in config.py
-IPAddress ip(192, 168, 43, 62);
+IPAddress ip(172,20,10,5);
 // Set gateway to your router's gateway
-IPAddress gateway(192, 168, 43, 38);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress gateway(172,20,10,1);
+IPAddress subnet(255,255,255,240);
 
 void setup() {
     Serial.begin(115200);
@@ -81,6 +81,7 @@ void loop() {
             pixels[N].R = (uint8_t)packetBuffer[i+1];
             pixels[N].G = (uint8_t)packetBuffer[i+2];
             pixels[N].B = (uint8_t)packetBuffer[i+3];
+           
         } 
         ledstrip.show(pixels);
         #if PRINT_FPS

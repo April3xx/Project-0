@@ -82,16 +82,16 @@ def melfrequencies_mel_filterbank(num_bands, freq_min, freq_max, num_fft_bands):
 
     mel_max = hertz_to_mel(freq_max)
     mel_min = hertz_to_mel(freq_min)
-    delta_mel = abs(mel_max - mel_min) / (num_bands + 1.0)
-    frequencies_mel = mel_min + delta_mel * arange(0, num_bands + 2)
-    lower_edges_mel = frequencies_mel[:-2]
-    upper_edges_mel = frequencies_mel[2:]
-    center_frequencies_mel = frequencies_mel[1:-1]
+    delta_mel = abs(mel_max - mel_min) / (num_bands + 1.0)                     #ในเเต่ละเเบนด์ กว้างเท่าไหร่
+    frequencies_mel = mel_min + delta_mel * arange(0, num_bands + 2)           #เพื่อคำนวนความถี่
+    lower_edges_mel = frequencies_mel[:-2]                                     #คำนวนหาค่าต่ำสุดของช่วงความถี่
+    upper_edges_mel = frequencies_mel[2:]                                      #คำนวนหาค่าสูงสุดของช่วงความถี่
+    center_frequencies_mel = frequencies_mel[1:-1]                             #คำนวนหาค่าความถี่
     return center_frequencies_mel, lower_edges_mel, upper_edges_mel
 
 
 def compute_melmat(num_mel_bands=24, freq_min=64, freq_max=8000,
-                   num_fft_bands=513, sample_rate=16000): 
+                   num_fft_bands=513, sample_rate=16000): #was 16000 sample rate
     """Returns tranformation matrix for mel spectrum.
     Parameters
     ----------
@@ -128,7 +128,7 @@ def compute_melmat(num_mel_bands=24, freq_min=64, freq_max=8000,
             freq_min,
             freq_max,
             num_fft_bands
-        )
+        ) #ดึงฟังก์ชันข้างบนมาใช้ เพื่อหาค่า สูง,กลาง,ต่ำ ของช่วงความถี่ และนำไปใช้งานต่อข้างล่าง
 
     center_frequencies_hz = mel_to_hertz(center_frequencies_mel)
     lower_edges_hz = mel_to_hertz(lower_edges_mel)
